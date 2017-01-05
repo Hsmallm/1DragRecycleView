@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Drag</string>
+    <item type="id" name="tag_first"></item>
+    <item type="id" name="tag_second"></item>
+    <item type="id" name="tag_three"></item>
+    <item type="id" name="tag_width"></item>
+    <item type="id" name="tag_height"></item>
+    <item type="id" name="tag_select"></item>
+</resources>
