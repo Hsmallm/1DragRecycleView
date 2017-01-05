@@ -103,13 +103,7 @@ public class MainActivity extends AppCompatActivity implements RecycleCallBack {
             }
             mAdapter.setData(mList);
             //-------实现item模块的拖拽、移动时的通知
-            if(from == 3 && to == 4){
-                return;
-            }else if(from == 4 && to == 5){
-                return;
-            }else {
-                mAdapter.notifyItemMoved(from, to);
-            }
+            mAdapter.notifyItemMoved(from, to);
             //--------拖拽移动后，其删除光标的位置也要随之移动...
             mAdapter.show.clear();
             mAdapter.show.put(to, to);
