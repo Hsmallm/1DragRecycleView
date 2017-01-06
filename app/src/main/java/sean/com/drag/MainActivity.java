@@ -7,13 +7,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Collections;
-
 import sean.com.drag.drag.DragItemCallBack;
 import sean.com.drag.drag.RecycleCallBack;
 
+
+/**
+ * 功能描述：实现类“今日头条”拖拽排序功能...
+ */
 public class MainActivity extends AppCompatActivity implements RecycleCallBack {
 
     private RecyclerView mRecyclerView;
@@ -49,14 +51,8 @@ public class MainActivity extends AppCompatActivity implements RecycleCallBack {
      */
     @Override
     public void itemOnClick(int position, View view) {
-        if (view.getId() == R.id.del) {
-            mList.remove(position);
-            mAdapter.setData(mList);
-            mAdapter.notifyItemRemoved(position);
-        } else {//通过view.getTag(),获取到相应点击视图的Tag标签
-            Toast.makeText(MainActivity.this, "当前点击的是" + view.getTag(), Toast.LENGTH_SHORT).show();
-            mAdapter.notifyDataSetChanged();
-        }
+        Toast.makeText(MainActivity.this, "当前点击的是" + view.getTag(), Toast.LENGTH_SHORT).show();
+        mAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -105,8 +101,6 @@ public class MainActivity extends AppCompatActivity implements RecycleCallBack {
             //-------实现item模块的拖拽、移动时的通知
             mAdapter.notifyItemMoved(from, to);
             //--------拖拽移动后，其删除光标的位置也要随之移动...
-            mAdapter.show.clear();
-            mAdapter.show.put(to, to);
         }
     }
 }

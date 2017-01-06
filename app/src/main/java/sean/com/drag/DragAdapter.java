@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,35 +15,23 @@ import java.util.List;
 import sean.com.drag.drag.DragHolderCallBack;
 import sean.com.drag.drag.RecycleCallBack;
 
-
 /**
- * Author: zhuwt
- * Date: 2016/6/21 18:07
- * Description: 说明
- * PackageName: com.ancun.autopack.ProjectAdapter
- * Copyright: 杭州存网络科技有限公司
- **/
+ * 功能描述：处理adapter的item相应的拖拽、拖拽停止、点击...相应事件...
+ * 相关问题描述：notifyItemChanged(i)与notifyDataSetChanged()的区别，
+ * notifyItemChanged(i)：通知相应position的item发生改变，即就是取消其相应的状态，重新再调onBindViewHolder()（注：这里可以处理选中的item避免通知，而通知其他的item发生改变...）
+ * notifyDataSetChanged()：通知所有item发生改变，即就是取消所有的状态，重新再调onBindViewHolder()
+ */
 public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
 
     private List<String> list;
 
     private RecycleCallBack mRecycleClick;
-    public SparseArray<Integer> show = new SparseArray<>();
-    private boolean firstInto = true;
+    private boolean isSelected = false;
 
     private ObjectAnimator animator;
     private ObjectAnimator animator2;
     private ObjectAnimator animator3;
     private AnimatorSet animatorSet;
-    private OnSelectListener mListener;
-
-    private interface OnSelectListener {
-        void changeItemBackground();
-    }
-
-    private void setSelectListener(OnSelectListener listener) {
-        mListener = listener;
-    }
 
     public DragAdapter(RecycleCallBack click, List<String> data) {
         this.list = data;
@@ -63,6 +50,8 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
 
     @Override
     public void onBindViewHolder(final DragHolder holder, final int position) {
+
+        //---直接设置控件的属性值,避免通过设置属性动画而导致的adapter复用的问题...
 //        if(holder.text.getTag(R.id.tag_width) != null && holder.text.getTag(R.id.tag_height) != null){
 //            int width = (int) holder.text.getTag(R.id.tag_width);
 //            int height = (int) holder.text.getTag(R.id.tag_height);
@@ -72,41 +61,37 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
 //            holder.text.setHeight(holder.text.getLayoutParams().height);
 //        }
 
-        ObjectAnimator animator = (ObjectAnimator) holder.item.getTag(R.id.tag_first);
-        ObjectAnimator animator2 = (ObjectAnimator) holder.item.getTag(R.id.tag_second);
-        ObjectAnimator animator3 = (ObjectAnimator) holder.item.getTag(R.id.tag_three);
-        if (animator != null && animator2 != null && animator3 != null) {
-            animator.setFloatValues(1f, 1f);
-            animator2.setFloatValues(1f, 1f);
-            animator3.setFloatValues(1f, 1f);
-            animator.end();
-            animator2.end();
-            animator3.end();
-        }
         holder.text.setText(list.get(position));
         //给相应的item打上相应的标签，即保存、记录它的原始状态
         holder.itemView.setTag(list.get(position));
-        if (!firstInto && null == show.get(position)){
-            holder.text.setBackgroundResource(R.drawable.item_touch_bg);
-        }else {
-            //        setSelectListener(new OnSelectListener() {
-//            @Override
-//            public void changeItemBackground() {
-//
-//            }
-//        });
-            if (position == 0) {
-                holder.text.setTextColor(Color.parseColor("#FFFFFF"));
-                holder.text.setBackgroundResource(R.drawable.item_recommend_bg);
-            } else if (position == 1) {
-                holder.text.setTextColor(Color.parseColor("#999999"));
-                holder.text.setBackgroundResource(R.drawable.item_no_move_bg);
-            } else {
+        if (position == 0) {
+            holder.text.setTextColor(Color.parseColor("#FFFFFF"));
+            holder.text.setBackgroundResource(R.drawable.item_recommend_bg);
+        } else if (position == 1) {
+            holder.text.setTextColor(Color.parseColor("#999999"));
+            holder.text.setBackgroundResource(R.drawable.item_no_move_bg);
+        } else {
+            holder.text.setTextColor(Color.parseColor("#666666"));
+            holder.text.setBackgroundResource(R.drawable.item_bg);
+        }
+        if (isSelected) {//---选中相关item时，其他item的背景设置虚线边框
+            if (position != 0 || position != 1) {
                 holder.text.setTextColor(Color.parseColor("#666666"));
-                holder.text.setBackgroundResource(R.drawable.item_bg);
+                holder.text.setBackgroundResource(R.drawable.item_touch_bg);
+            }
+        } else {//---停止选中拖拽时，消除adapter复用导致动画效果...
+            ObjectAnimator animator = (ObjectAnimator) holder.item.getTag(R.id.tag_first);
+            ObjectAnimator animator2 = (ObjectAnimator) holder.item.getTag(R.id.tag_second);
+            ObjectAnimator animator3 = (ObjectAnimator) holder.item.getTag(R.id.tag_three);
+            if (animator != null && animator2 != null && animator3 != null) {
+                animator.setFloatValues(1f, 1f);
+                animator2.setFloatValues(1f, 1f);
+                animator3.setFloatValues(1f, 1f);
+                animator.end();
+                animator2.end();
+                animator3.end();
             }
         }
-
     }
 
     @Override
@@ -119,7 +104,6 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
             View.OnClickListener, DragHolderCallBack {
 
         public TextView text;
-        //        public ImageView del;
         public LinearLayout item;
         private RecycleCallBack mClick;
 
@@ -128,9 +112,7 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
             mClick = click;
             item = (LinearLayout) itemView.findViewById(R.id.item);
             text = (TextView) itemView.findViewById(R.id.text);
-//            del = (ImageView) itemView.findViewById(R.id.del);
             item.setOnClickListener(this);
-//            del.setOnClickListener(this);
         }
 
         /**
@@ -138,12 +120,7 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
          */
         @Override
         public void onSelect() {
-            show.clear();
-            show.put(getAdapterPosition(), getAdapterPosition());
-//            itemView.setBackgroundColor(Color.LTGRAY);
-//            del.setVisibility(View.VISIBLE);
-
-            //长按选中item后设置相应的效果
+            //---设置效果1：使用属性动画，长按选中item后设置相应的效果
             animator = ObjectAnimator.ofFloat(item, "scaleX", 1f, 1.1f);
             animator2 = ObjectAnimator.ofFloat(item, "scaleY", 1f, 1.1f);
             animator3 = ObjectAnimator.ofFloat(item, "alpha", 1f, 0.6f);
@@ -153,10 +130,15 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
             animatorSet.setDuration(100);
             animatorSet.start();
             text.setBackgroundResource(R.drawable.item_touch_bg);
-//            firstInto = false;
-//            notifyItemRangeChanged(3,list.size()-2,getAdapterPosition());
-//            item.setTag(R.id.tag_|select,animatorSet);
-//            notifyDataSetChanged();
+            for (int i = 2; i < list.size(); i++) {
+                if (i != getAdapterPosition()) {
+                    notifyItemChanged(i);
+                    notifyDataSetChanged();
+                }
+            }
+            isSelected = true;
+
+            //---设置效果2：z直接改变控件宽、高、透明度等等属性值
 //            text.setTextColor(Color.parseColor("#4d666666"));
 //            int width = text.getWidth();
 //            int height = text.getHeight();
@@ -174,7 +156,7 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
          */
         @Override
         public void onClear() {
-            firstInto = true;
+            isSelected = false;
             item.setTag(R.id.tag_first, animator);
             item.setTag(R.id.tag_second, animator2);
             item.setTag(R.id.tag_three, animator3);
@@ -187,7 +169,6 @@ public class DragAdapter extends RecyclerView.Adapter<DragAdapter.DragHolder> {
         @Override
         public void onClick(View v) {
             if (null != mClick) {
-                show.clear();
                 mClick.itemOnClick(getAdapterPosition(), v);
             }
         }

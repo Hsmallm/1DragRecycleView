@@ -4,11 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 /**
- * Author: zhuwt
- * Date: 2016/7/4 15:52
- * Description: 说明
- * PackageName: sean.com.drag.drag.DragItemCallBack
- * Copyright: 杭州存网络科技有限公司
  *
  * 功能描述：拖拽模块监听处理类，主要时实现了ItemTouchHelper.Callback接口，对模块的拖拽做相关的监听处理
  *
