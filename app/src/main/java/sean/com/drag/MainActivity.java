@@ -14,6 +14,8 @@ import sean.com.drag.drag.RecycleCallBack;
 
 
 /**
+ * Created by hzhm on 2016/12/27.
+ *
  * 功能描述：实现类“今日头条”拖拽排序功能...
  */
 public class MainActivity extends AppCompatActivity implements RecycleCallBack {

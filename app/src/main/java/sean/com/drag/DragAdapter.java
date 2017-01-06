@@ -16,6 +16,8 @@ import sean.com.drag.drag.DragHolderCallBack;
 import sean.com.drag.drag.RecycleCallBack;
 
 /**
+ * Created by hzhm on 2016/12/27.
+ *
  * 功能描述：处理adapter的item相应的拖拽、拖拽停止、点击...相应事件...
  * 相关问题描述：notifyItemChanged(i)与notifyDataSetChanged()的区别，
  * notifyItemChanged(i)：通知相应position的item发生改变，即就是取消其相应的状态，重新再调onBindViewHolder()（注：这里可以处理选中的item避免通知，而通知其他的item发生改变...）

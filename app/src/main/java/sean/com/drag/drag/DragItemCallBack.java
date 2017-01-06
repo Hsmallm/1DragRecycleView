@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 /**
+ * Created by hzhm on 2016/12/27.
  *
  * 功能描述：拖拽模块监听处理类，主要时实现了ItemTouchHelper.Callback接口，对模块的拖拽做相关的监听处理
  *

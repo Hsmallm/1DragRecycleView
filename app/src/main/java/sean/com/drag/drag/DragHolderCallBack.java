@@ -1,6 +1,7 @@
 package sean.com.drag.drag;
 
 /**
+ * Created by hzhm on 2016/12/27.
  *
  * 功能描述：这个接口主要被DragAdapter的DragHolder所实现，用于处理相应Item模块的拖拽时、拖拽停止时的相关操作
  *
